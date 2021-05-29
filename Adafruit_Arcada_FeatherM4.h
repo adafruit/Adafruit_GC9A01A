@@ -23,9 +23,6 @@
 //#define ARCADA_LEFTTFT_DC 11  // Display D/C Arduino pin number
 //#define ARCADA_LEFTTFT_RST -1 // Display reset Arduino pin number
 
-//#define ARCADA_SPEAKER_ENABLE 49
-//#define ARCADA_NEOPIXEL_PIN 8
-//#define ARCADA_NEOPIXEL_NUM 4
 #define ARCADA_AUDIO_OUT A0
 
 //#define ARCADA_LIGHT_SENSOR A7
@@ -48,12 +45,8 @@ public:
   }
 
   void displayBegin(void) {
-#if 0
     Adafruit_GC9A01A *tft = new Adafruit_GC9A01A(
-      &ARCADA_TFT_SPI, ARCADA_TFT_CS, ARCADA_TFT_DC, ARCADA_TFT_RST);
-#else
-    Adafruit_GC9A01A *tft = new Adafruit_GC9A01A(ARCADA_TFT_CS, ARCADA_TFT_DC);
-#endif
+      &ARCADA_TFT_SPI, ARCADA_TFT_DC, ARCADA_TFT_CS, ARCADA_TFT_RST);
     tft->begin();
     tft->setRotation(ARCADA_TFT_ROTATION);
     tft->fillScreen(ARCADA_TFT_DEFAULTFILL);
@@ -69,9 +62,6 @@ public:
   }
 
 private:
-  uint16_t capRead(uint8_t outpin, uint8_t inpin, uint8_t num_readings = 10) {
-    return 0;
-  }
 };
 
 #endif

@@ -1,12 +1,11 @@
 #if defined(ADAFRUIT_ITSYBITSY_M4_EXPRESS)
-//#include <Adafruit_ST7789.h>
 #include <Adafruit_GC9A01A.h>
 #include "wiring_private.h"
 #include <Adafruit_DotStar.h>
 
 #define ARCADA_TFT_SPI SPI
-#define ARCADA_TFT_CS 7  // Display CS Arduino pin number
-#define ARCADA_TFT_DC 9  // Display D/C Arduino pin number
+#define ARCADA_TFT_CS 9  // Display CS Arduino pin number
+#define ARCADA_TFT_DC 7  // Display D/C Arduino pin number
 #define ARCADA_TFT_RST -1 // Display reset Arduino pin number
 //#define ARCADA_TFT_LITE 47
 #define ARCADA_TFT_ROTATION 1

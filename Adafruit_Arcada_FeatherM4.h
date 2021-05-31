@@ -1,6 +1,9 @@
 // Header file to use Adafruit_Arcada library on Feather M4 with GC9A01A
 // displays. Allows M4_Eyes sketch to run on this hardware combo.
-// Place in Adafruit_Arcada/Boards and add line to Adafruit_Arcada.h:
+// As written, this only handles a single GC9A01A screen. See
+// Adafruit_Arcada_ItsyBitsyM4.h for insights on handling 2 screens
+// (requires setting up a second SPI SERCOM).
+// Place file in Adafruit_Arcada/Boards and add line to Adafruit_Arcada.h:
 // #include "Boards/Adafruit_Arcada_FeatherM4.h"
 
 // This code supplied as-is and is not provided nor supported by Adafruit.
@@ -17,16 +20,8 @@
 #define ARCADA_TFT_WIDTH 240
 #define ARCADA_TFT_HEIGHT 240
 //#define ARCADA_TFT_LITE 47
-// SECOND DISPLAY ON SEPARATE SPI BUS:
-//#define ARCADA_LEFTTFT_SPI SPI1
-//#define ARCADA_LEFTTFT_CS 12  // Display CS Arduino pin number
-//#define ARCADA_LEFTTFT_DC 11  // Display D/C Arduino pin number
-//#define ARCADA_LEFTTFT_RST -1 // Display reset Arduino pin number
 
 #define ARCADA_AUDIO_OUT A0
-
-//#define ARCADA_LIGHT_SENSOR A7
-//#define ARCADA_BATTERY_SENSOR A6
 
 #define ARCADA_CALLBACKTIMER 4
 #define ARCADA_CALLBACKTIMER_HANDLER TC4_Handler

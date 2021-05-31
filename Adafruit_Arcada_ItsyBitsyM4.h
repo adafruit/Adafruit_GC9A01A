@@ -1,3 +1,12 @@
+// Header file to use Adafruit_Arcada library on ItsyBitsy M4 with two
+// GC9A01A displays. Allows M4_Eyes sketch to run on this hardware combo.
+// As written, enables two screens. See Adafruit_Arcada_FeatherM4.h for
+// insights on handling just one screen.
+// Place file in Adafruit_Arcada/Boards and add line to Adafruit_Arcada.h:
+// #include "Boards/Adafruit_Arcada_ItsyBitsyM4.h"
+
+// This code supplied as-is and is not provided nor supported by Adafruit.
+
 #if defined(ADAFRUIT_ITSYBITSY_M4_EXPRESS)
 #include <Adafruit_GC9A01A.h>
 #include "wiring_private.h"
@@ -14,21 +23,24 @@
 #define ARCADA_TFT_HEIGHT 240
 // SECOND DISPLAY ON SEPARATE SPI BUS:
 #if defined(GLOBAL_VAR)
-// SPI is on sercom0, I2C on sercom1, 2-5 are available
-// Sercom3 is normally serial1 but let use it for 2nd SPI
-// 0 and 1 are RX, TX respectively - PORTA16, 17
-// sercom_alts are SERCOM3/PAD1 and SERCOM3/PAD0
-// This puts MOSI on TX, SCK on RX
+// Default SPI is on sercom0, I2C on sercom1. sercom3 is normally serial1
+// but let use it for 2nd SPI. Pins 0 and 1 are RX, TX respectively - that's
+// PORTA16, 17. PIO_SERCOM_ALT settings are SERCOM3/PAD1 and SERCOM3/PAD0.
+// This puts MOSI on TX, SCK on RX.
 SPIClass SPI1(&sercom3, 0, 1, 2, SPI_PAD_0_SCK_1, SERCOM_RX_PAD_3);
+// Because we don't set pinPeripheral() for pin 2 (MOSI isn't needed for
+// eyes nor provided on breakout), the pin should still be usable as a
+// digital output (e.g. if wanting to use for CS or DC).
 #else
 extern SPIClass SPI1;
 #endif
+// Recent M4_eyes change checks for ARCADA_LEFTTFT_SPI to enable 2 eyes.
 #define ARCADA_LEFTTFT_SPI SPI1
 #define ARCADA_LEFTTFT_CS A5  // Display CS Arduino pin number
 #define ARCADA_LEFTTFT_DC A4  // Display D/C Arduino pin number
 #define ARCADA_LEFTTFT_RST -1 // Display reset Arduino pin number
 
-#define TFT_RESET 10 // Used for BOTH displays
+#define TFT_RESET 10 // Single reset used for BOTH displays
 
 #define ARCADA_AUDIO_OUT A0
 
@@ -51,7 +63,7 @@ public:
   }
 
   void displayBegin(void) {
-    // Hard reset both displays
+    // Hard reset both displays - must do this before begin()
     pinMode(TFT_RESET, OUTPUT);
     digitalWrite(TFT_RESET, LOW);
     delay(10);
@@ -79,9 +91,6 @@ public:
     _display->fillScreen(ARCADA_TFT_DEFAULTFILL);
     display2->fillScreen(ARCADA_TFT_DEFAULTFILL);
     display = _display;
-    // NOTE: in M4_eyes/globals.h, in the INIT_EYESTRUCTS section, rather
-    // than checking if MONSTER_M4SK is defined, it should instead check
-    // if NUM_EYES > 1 to set up dual SPI DMA.
   }
 
   uint32_t variantReadButtons(void) {

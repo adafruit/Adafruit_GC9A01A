@@ -1,7 +1,8 @@
 #if defined(ADAFRUIT_ITSYBITSY_M4_EXPRESS)
-// INCLUDE ONE DISPLAY OR OTHER
+// INCLUDE ONLY **ONE** OF THESE DISPLAY TYPES:
 #include <Adafruit_GC9A01A.h>  // Round 240 pixel diameter TFT
-//#include <Adafruit_ST7789.h> // Square 240x240 TFT
+//#include <Adafruit_ST7789.h>   // Square 240x240 TFT
+//#include <Adafruit_ILI9341.h>  // Rectangular 320x240 TFT
 #include "wiring_private.h"
 #include <Adafruit_DotStar.h>
 
@@ -14,7 +15,11 @@
 //#define ARCADA_TFT_LITE 47
 #define ARCADA_TFT_ROTATION 1
 #define ARCADA_TFT_DEFAULTFILL 0xFFFF
+#if defined(_ADAFRUIT_ILI9341H_)
+#define ARCADA_TFT_WIDTH 320
+#else
 #define ARCADA_TFT_WIDTH 240
+#endif
 #define ARCADA_TFT_HEIGHT 240
 
 #if defined(TWO_DISPLAYS)
@@ -51,6 +56,8 @@ public:
   Adafruit_Arcada(void) { _has_accel = false; };
 #if defined(_ADAFRUIT_ST7789H_)
   Adafruit_ST7789 *_display, *display2;
+#elif defined(_ADAFRUIT_ILI9341H_)
+  Adafruit_ILI9341 *_display, *display2;
 #else
   Adafruit_GC9A01A *_display, *display2;
 #endif
@@ -69,21 +76,23 @@ public:
     digitalWrite(TFT_RESET, HIGH);
     delay(10);
 
-    uint8_t rtna =
-        0x01; // Screen refresh rate control (datasheet 9.2.18, FRCTRL2)
-
     // IMPORTANT: CS and DC are different order among displays
 #if defined(_ADAFRUIT_ST7789H_)
     _display = new Adafruit_ST7789(&ARCADA_TFT_SPI, ARCADA_TFT_CS,
                                     ARCADA_TFT_DC, ARCADA_TFT_RST);
     _display->init(240, 240);
+#elif defined(_ADAFRUIT_ILI9341H_)
+    _display = new Adafruit_ILI9341(&ARCADA_TFT_SPI, ARCADA_TFT_DC,
+                                    ARCADA_TFT_CS, ARCADA_TFT_RST);
+    _display->begin();
 #else
+    uint8_t rtna = 0x01; // Screen refresh rate control
     _display = new Adafruit_GC9A01A(&ARCADA_TFT_SPI, ARCADA_TFT_DC,
                                     ARCADA_TFT_CS, ARCADA_TFT_RST);
     _display->begin();
+    _display->sendCommand(0xC6, &rtna, 1); // Helps contrast a little
 #endif
     _display->setSPISpeed(50000000); // yes fast
-    _display->sendCommand(0xC6, &rtna, 1);
     _display->setRotation(ARCADA_TFT_ROTATION);
     _display->fillScreen(ARCADA_TFT_DEFAULTFILL);
 
@@ -95,13 +104,17 @@ public:
     display2 = new Adafruit_ST7789(&ARCADA_LEFTTFT_SPI, ARCADA_LEFTTFT_CS,
                                     ARCADA_LEFTTFT_DC, ARCADA_LEFTTFT_RST);
     display2->init(240, 240);
+#elif defined(_ADAFRUIT_ILI9341H_)
+    display2 = new Adafruit_ILI9341(&ARCADA_LEFTTFT_SPI, ARCADA_LEFTTFT_DC,
+                                    ARCADA_LEFTTFT_CS, ARCADA_LEFTTFT_RST);
+    display2->begin();
 #else
     display2 = new Adafruit_GC9A01A(&ARCADA_LEFTTFT_SPI, ARCADA_LEFTTFT_DC,
                                     ARCADA_LEFTTFT_CS, ARCADA_LEFTTFT_RST);
     display2->begin();
+    display2->sendCommand(0xC6, &rtna, 1); // Helps contrast a little
 #endif
     display2->setSPISpeed(50000000);
-    display2->sendCommand(0xC6, &rtna, 1);
     display2->setRotation(ARCADA_TFT_ROTATION);
     display2->fillScreen(ARCADA_TFT_DEFAULTFILL);
 #endif

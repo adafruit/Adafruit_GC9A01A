@@ -1,18 +1,18 @@
 #if defined(ADAFRUIT_ITSYBITSY_M4_EXPRESS)
 // INCLUDE ONLY **ONE** OF THESE DISPLAY TYPES:
-#include <Adafruit_GC9A01A.h>  // Round 240 pixel diameter TFT
-//#include <Adafruit_ST7789.h>   // Square 240x240 TFT
-//#include <Adafruit_ILI9341.h>  // Rectangular 320x240 TFT
+#include <Adafruit_GC9A01A.h> // Round 240 pixel diameter TFT
+// #include <Adafruit_ST7789.h>   // Square 240x240 TFT
+// #include <Adafruit_ILI9341.h>  // Rectangular 320x240 TFT
 #include "wiring_private.h"
 #include <Adafruit_DotStar.h>
 
 #define TWO_DISPLAYS
 
 #define ARCADA_TFT_SPI SPI
-#define ARCADA_TFT_DC  A5
-#define ARCADA_TFT_CS  A4
+#define ARCADA_TFT_DC A5
+#define ARCADA_TFT_CS A4
 #define ARCADA_TFT_RST -1
-//#define ARCADA_TFT_LITE 47
+// #define ARCADA_TFT_LITE 47
 #define ARCADA_TFT_ROTATION 1
 #define ARCADA_TFT_DEFAULTFILL 0xFFFF
 #if defined(_ADAFRUIT_ILI9341H_)
@@ -23,21 +23,21 @@
 #define ARCADA_TFT_HEIGHT 240
 
 #if defined(TWO_DISPLAYS)
- // SECOND DISPLAY ON SEPARATE SPI BUS:
- #if defined(GLOBAL_VAR)
-  // SPI is on sercom0, I2C on sercom1, 2-5 are available
-  // Sercom3 is normally serial1 but let use it for 2nd SPI
-  // 0 and 1 are RX, TX respectively - PORTA16, 17
-  // sercom_alts are SERCOM3/PAD1 and SERCOM3/PAD0
-  // This puts MOSI on TX, SCK on RX
-  SPIClass SPI1(&sercom3, 0, 1, 2, SPI_PAD_0_SCK_1, SERCOM_RX_PAD_3);
- #else
-  extern SPIClass SPI1;
- #endif
-  #define ARCADA_LEFTTFT_SPI SPI1
-  #define ARCADA_LEFTTFT_DC  9
-  #define ARCADA_LEFTTFT_CS  7
-  #define ARCADA_LEFTTFT_RST -1
+// SECOND DISPLAY ON SEPARATE SPI BUS:
+#if defined(GLOBAL_VAR)
+// SPI is on sercom0, I2C on sercom1, 2-5 are available
+// Sercom3 is normally serial1 but let use it for 2nd SPI
+// 0 and 1 are RX, TX respectively - PORTA16, 17
+// sercom_alts are SERCOM3/PAD1 and SERCOM3/PAD0
+// This puts MOSI on TX, SCK on RX
+SPIClass SPI1(&sercom3, 0, 1, 2, SPI_PAD_0_SCK_1, SERCOM_RX_PAD_3);
+#else
+extern SPIClass SPI1;
+#endif
+#define ARCADA_LEFTTFT_SPI SPI1
+#define ARCADA_LEFTTFT_DC 9
+#define ARCADA_LEFTTFT_CS 7
+#define ARCADA_LEFTTFT_RST -1
 #endif // end TWO_DISPLAYS
 
 #define TFT_RESET 2 // Used for BOTH displays
@@ -79,7 +79,7 @@ public:
     // IMPORTANT: CS and DC are different order among displays
 #if defined(_ADAFRUIT_ST7789H_)
     _display = new Adafruit_ST7789(&ARCADA_TFT_SPI, ARCADA_TFT_CS,
-                                    ARCADA_TFT_DC, ARCADA_TFT_RST);
+                                   ARCADA_TFT_DC, ARCADA_TFT_RST);
     _display->init(240, 240);
 #elif defined(_ADAFRUIT_ILI9341H_)
     _display = new Adafruit_ILI9341(&ARCADA_TFT_SPI, ARCADA_TFT_DC,
@@ -102,7 +102,7 @@ public:
     // IMPORTANT: CS and DC are different order among displays
 #if defined(_ADAFRUIT_ST7789H_)
     display2 = new Adafruit_ST7789(&ARCADA_LEFTTFT_SPI, ARCADA_LEFTTFT_CS,
-                                    ARCADA_LEFTTFT_DC, ARCADA_LEFTTFT_RST);
+                                   ARCADA_LEFTTFT_DC, ARCADA_LEFTTFT_RST);
     display2->init(240, 240);
 #elif defined(_ADAFRUIT_ILI9341H_)
     display2 = new Adafruit_ILI9341(&ARCADA_LEFTTFT_SPI, ARCADA_LEFTTFT_DC,
@@ -122,9 +122,7 @@ public:
     display = _display;
   }
 
-  uint32_t variantReadButtons(void) {
-    return 0;
-  }
+  uint32_t variantReadButtons(void) { return 0; }
 
 private:
 };

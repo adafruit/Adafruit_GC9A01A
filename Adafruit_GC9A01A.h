@@ -108,7 +108,7 @@ public:
   Adafruit_GC9A01A(int8_t _CS, int8_t _DC, int8_t _RST = -1);
 #if !defined(ESP8266)
   Adafruit_GC9A01A(SPIClass *spiClass, int8_t dc, int8_t cs = -1,
-                   int8_t rst = -1);
+                   int8_t rst = -1, uint8_t mode = SPI_MODE0);
 #endif // end !ESP8266
   Adafruit_GC9A01A(tftBusWidth busWidth, int8_t d0, int8_t wr, int8_t dc,
                    int8_t cs = -1, int8_t rst = -1, int8_t rd = -1);
@@ -118,4 +118,21 @@ public:
   void invertDisplay(bool i);
 
   void setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
+
+private:
+  // For applictions that are constrained by SPI bandwidth (rather than render
+  // cycles), shenanigans are possible with RP2XXX chips and certain displays
+  // by using SPI_MODE3 to eke out a few extra percent throughput. Small but
+  // quantifiable and perceptible. Explained here:
+  // raspberrypi.stackexchange.com/questions/132758/what-is-the-pico-max-spi-frequency
+  // Although initSPI() in Adafruit_SPITFT accepts an SPI mode argument, the
+  // user-facing begin() function provided by SPITFT subclasses is a virtual
+  // function accepting a single argument (freq), and adding a second argument
+  // (even if optional) would require updating EVERY SPITFT subclass and make
+  // a lot of people very frustrated. Given how super esoteric this is, a
+  // workaround here is to allow SPI mode as an optional argument specifically
+  // to the GC9A01A constructor that starts with an spiClass argument. This
+  // should have no impact on existing code, which will continue using SPI
+  // mode 0 as always!
+  uint8_t spi_mode = SPI_MODE0; ///< Save SPI mode from constructor to initSPI()
 };
